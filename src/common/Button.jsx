@@ -8,12 +8,11 @@ export default function Button(props) {
 const StyledButton = styled.button`
   width: ${(props) => props.width || "145px"};
   height: ${(props) => props.height || "44px"};
-
+  font-size: ${(props) => props.fontSize || "17px"};
   background-color: #2f395a;
   font-family: "SpoqaHanSansNeoLight";
   border: none;
   color: white;
-  font-size: 17px;
   display: flex;
   justify-content: center;
   align-items: center;
