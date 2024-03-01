@@ -7,6 +7,7 @@ import Writing from "../components/Writing";
 
 export default function Main() {
   const [isWriting, setIsWriting] = useState(false);
+  console.log("isWriting value:", isWriting);
 
   const handleWritingButtonClick = () => {
     setIsWriting(true);
