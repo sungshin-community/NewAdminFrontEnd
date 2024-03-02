@@ -1,17 +1,17 @@
 import React from "react";
 import styled from "styled-components";
-import Button from "./Button";
+import Button from "../common/Button";
 
 export default function Writing() {
   return (
     <WritingWrap>
       <StyledHeading>게시글 작성</StyledHeading>
       <div className="Write">
-        <input id="title_txt" placeholder='제목을 입력하세요.' type="text" />
+        <input id="title_txt" placeholder="제목을 입력하세요." type="text" />
       </div>
 
       <div className="Write">
-        <textarea id='content_txt' placeholder='내용을 입력하세요.'></textarea>
+        <textarea id="content_txt" placeholder="내용을 입력하세요."></textarea>
       </div>
       <ButtonWrap1>
         <Button width="120px" height="28px" fontSize="14px">
@@ -40,7 +40,7 @@ const ButtonWrap1 = styled.div`
 `;
 
 const WritingWrap = styled.div`
-  background-color: #FBFCFE;
+  background-color: #fbfcfe;
   height: 100vh;
   width: 692px;
   padding: 20px;
@@ -54,7 +54,7 @@ const WritingWrap = styled.div`
       width: 91%;
       padding-bottom: 30px;
       resize: none;
-     
+
       border: none;
       font-size: 15px;
       font-family: "SpoqaHanSansNeoLight";
@@ -66,7 +66,7 @@ const WritingWrap = styled.div`
         outline: none;
       }
       &::placeholder {
-        font-size: 16px; 
+        font-size: 16px;
       }
     }
 
