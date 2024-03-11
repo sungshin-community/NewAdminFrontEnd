@@ -8,9 +8,11 @@ export default function Pagenation({
   currentPage,
   setCurrentPage,
   totalPageNum,
+  fetchData,
 }) {
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    fetchData(page);
   };
 
   return (
@@ -22,9 +24,9 @@ export default function Pagenation({
           prevPageText={"<"}
           nextPageText={">"}
           activePage={currentPage}
-          itemsCountPerPage={itemsPerPage}
-          totalItemsCount={totalItems}
-          pageRangeDisplayed={totalPageNum}
+          itemsCountPerPage={15}
+          totalItemsCount={15 * totalPageNum}
+          pageRangeDisplayed={10}
           onChange={handlePageChange}
         ></Pagination>
       </PaginationBox>
