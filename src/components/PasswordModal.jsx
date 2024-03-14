@@ -10,7 +10,6 @@ const PasswordModal = ({ isOpen, onConfirm, onCancel, onChange, passwordInput })
   const handleConfirm = () => {
     // 연동 전 데모 데이터
     const correctPassword = "example123";
-
     if (passwordInput === correctPassword) {
       setIsPasswordValid(true);
       onConfirm(); // 비밀번호가 맞으면 확인 동작 수행
