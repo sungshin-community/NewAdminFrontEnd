@@ -4,6 +4,7 @@ import Button from "../common/Button";
 import Pagination from "./Pagination";
 import axios from "axios";
 
+
 export default function PostMannager({ onWritingButtonClick, onPostClick, isModifying }) {
   const [postLists, setPostLists] = useState([]); // 게시글 목록
   const [data, setData] = useState([]); // 전체 데이터
@@ -23,7 +24,7 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
     fetchData(currentPage, searchKeyword);
   };
 
-  //for tes accessToken
+  //테스트 accessToken
   const accessToken =
   "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjM1MTIzNSIsImF1dGgiOiJTQ0hPT0xfREVQQVJUTUVOVCIsImV4cCI6MTcxMDQxMjU2OX0.yFqMF2zyQTv7SF3KHC2E4p-NGMobtIPBVeWWKjm2GHGFjQlOJCLvCKTTD2sUHDaX6igwHG4De7zVVwjqPnFeWw";
    const login = async (id, password) => {
@@ -121,6 +122,7 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
     onPostClick(postId); // 선택된 게시물의 ID를 부모 컴포넌트로 전달
 };
 
+
   return (
     <PostMannagerWrap>
       {/* 상단 제목 */}
@@ -180,6 +182,7 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
               </TableBox>
             </ListBoxWrap>
           </ClickablePost>
+
         ))}
       </ListContainer>
       <ButtonWrap>
