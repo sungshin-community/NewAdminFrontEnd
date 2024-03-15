@@ -4,8 +4,11 @@ import Button from "../common/Button";
 import Pagination from "./Pagination";
 import axios from "axios";
 
-
-export default function PostMannager({ onWritingButtonClick, onPostClick, isModifying }) {
+export default function PostMannager({
+  onWritingButtonClick,
+  onPostClick,
+  isModifying,
+}) {
   const [postLists, setPostLists] = useState([]); // 게시글 목록
   const [data, setData] = useState([]); // 전체 데이터
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,7 +16,7 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
   const [selectedPost, setSelectedPost] = useState(null); // 선택된 게시글
   const [isWriting, setIsWriting] = useState(false);
 
-  //const accessToken = localStorage.getItem("accessToken");
+  const accessToken = localStorage.getItem("accessToken");
   // 검색어 입력
   const handleSearchInputChange = (e) => {
     setSearchKeyword(e.target.value);
@@ -23,48 +26,6 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
   const handleSearchButtonClick = () => {
     fetchData(currentPage, searchKeyword);
   };
-
-  //테스트 accessToken
-  const accessToken =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjM1MTIzNSIsImF1dGgiOiJTQ0hPT0xfREVQQVJUTUVOVCIsImV4cCI6MTcxMDQxMjU2OX0.yFqMF2zyQTv7SF3KHC2E4p-NGMobtIPBVeWWKjm2GHGFjQlOJCLvCKTTD2sUHDaX6igwHG4De7zVVwjqPnFeWw";
-   const login = async (id, password) => {
-    try {
-      const apiUrl = "http://15.165.252.35:1936/auth/signin";
-
-      const response = await axios.post(apiUrl, {
-        username: id,
-        password: password,
-      });
-
-      const accessToken = response.data.data.tokenDto.accessToken;
-      const refreshToken = response.data.data.tokenDto.refreshToken;
-
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      console.log(response.data);
-      return true;
-    } catch (e) {
-      console.log(e.response.data);
-      return false;
-    }
-  };
-
-  const testLogin = async () => {
-    try {
-      const result = await login("12351235", "password123!!!");
-      if (result) {
-        console.log("로그인 성공");
-      } else {
-        console.log("로그인 실패");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    testLogin();
-  }, []);
 
   // 게시글 목록 연동
   useEffect(() => {
@@ -120,8 +81,7 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
     console.log("Post ID:", postId);
     setSelectedPost(postId);
     onPostClick(postId); // 선택된 게시물의 ID를 부모 컴포넌트로 전달
-};
-
+  };
 
   return (
     <PostMannagerWrap>
@@ -182,7 +142,6 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
               </TableBox>
             </ListBoxWrap>
           </ClickablePost>
-
         ))}
       </ListContainer>
       <ButtonWrap>
@@ -270,7 +229,7 @@ const ButtonWrap = styled.div`
 `;
 
 const ClickablePost = styled.div`
-  cursor: ${(props) => (props.isModifying? 'not-allowed' : 'pointer')};
+  cursor: ${(props) => (props.isModifying ? "not-allowed" : "pointer")};
 `;
 
 const handlePostClick = (postId) => {
