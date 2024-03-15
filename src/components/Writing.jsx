@@ -1,23 +1,66 @@
-import React from "react";
+// import React, { useState } from "react";
 import styled from "styled-components";
 import Button from "../common/Button";
-
+import axios from "axios";
 export default function Writing() {
+  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const accessToken = localStorage.getItem("accessToken");
+    const title = document.getElementById('title_txt');
+    const content = document.getElementById('content_txt');
+
+    const post = {
+      content: content.value,
+      title: title.value
+    }
+    console.log("post: " + JSON.stringify(post))
+    console.log("access token: " + accessToken)
+
+    try {
+      const response = await axios.post(`http://15.165.252.35:1936/department/posts`, null, {
+        headers: {
+          "Authorization": "Bearer " + accessToken,
+        },
+        params: post
+      })
+      // .then((response) => console.log(response))
+      // .catch((err) => console.log(err));
+
+      console.log(response.data);
+    } catch (e) {
+      console.log(e.response.data);
+      return false;
+    }
+
+  }
   return (
     <WritingWrap>
       <StyledHeading>게시글 작성</StyledHeading>
       <div className="Write">
-        <input id="title_txt" placeholder="제목을 입력하세요." type="text" />
+        <input
+          id="title_txt"
+          placeholder="제목을 입력하세요."
+          type="text"
+        />
       </div>
 
       <div className="Write">
-        <textarea id="content_txt" placeholder="내용을 입력하세요."></textarea>
+        <textarea
+          id="content_txt"
+          placeholder="내용을 입력하세요."
+        ></textarea>
       </div>
       <ButtonWrap1>
         <Button width="120px" height="28px" fontSize="14px">
           취소
         </Button>
-        <Button width="120px" height="28px" fontSize="14px">
+        <Button
+          width="120px"
+          height="28px"
+          fontSize="14px"
+          onClick={handleSubmit}
+        >
           등록하기
         </Button>
       </ButtonWrap1>

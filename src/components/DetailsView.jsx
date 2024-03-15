@@ -4,34 +4,86 @@ import Button from "../common/Button";
 import DeleteModal from "./DeleteModal";
 import PasswordModal from "./PasswordModal";
 import ModifyModal from "./ModifyModal";
-import { useState } from "react";
-// 연동 전 데모 데이터
-const demoData = [
-  {
-    number: 1,
-    title: "게시글의 제목입니다",
-    date: "24.02.10 - 12:00",
-    content: "게시글 내용입니다 어쩌구저쩌구 일이삼사오육칠팔구십",
-  },
-];
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-export default function DetailsView() {
+export default function DetailsView({ postId, updateIsModifying }) {
   {
     /*삭제 모달*/
   }
+  
+  const accessToken = localStorage.getItem("accessToken");
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
+  const [data, setData] = useState([]); // 전체 데이터
+  const [modifiedPostData, setModifiedPostData] = useState({
+    title: "",
+    content: "",
+  });
+  const [isModifying, setIsModifying] = useState(false);
 
-  const selectedPost = demoData[0];
+  const handleConfirmModify = () => {
+    setModifyModalOpen(false);
+    setIsModifying(true);
+    updateIsModifying(true);
+  };
+
+  const handlePostClick = async () => {
+    // const title = document.getElementById('detail_title_txt');
+    // const content = document.getElementById('detail_content_txt');
+
+    // const modifiedPostData = {
+    //   title: title.textContent,
+    //   content: content.textContent
+    // };
+
+    try {
+      console.log("Modified Post Data:", modifiedPostData);
+      const apiUrl = `http://15.165.252.35:1936/department/posts/${postId}`;
+      const response = await axios.put(
+        apiUrl,
+        null, 
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          params: modifiedPostData
+        }
+      );
+
+      console.log("게시글이 성공적으로 수정되었습니다.", response.data);
+      window.alert("게시글이 수정되었습니다.");
+      
+      setData(modifiedPostData);
+    } catch (error) {
+      setModifiedPostData(data);
+      console.error("게시글 수정 중 오류 발생:", error);
+    }
+
+    setIsModifying(false);
+    updateIsModifying(false);
+  };
+
+
+  const handleCancelPostClick = () => {
+    setModifiedPostData(data);
+    setIsModifying(false);
+    updateIsModifying(false);
+  };
+  // const accessToken =
+  // "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjM1MTIzNSIsImF1dGgiOiJTQ0hPT0xfREVQQVJUTUVOVCIsImV4cCI6MTcxMDMyNTYyMn0.hpUIMgUs4aGLqvB-Y-0XmInfscKWSrkkYtZgCJwHNIT805ZHv8vgvREakjHOK-iFI0OCccVbWFle78yKukQFlw";
+
+  //const selectedPost = demoData[0];
 
   const handleDeleteClick = () => {
     setDeleteModalOpen(true);
   };
-
+ 
   const handleConfirmDelete = () => {
     setDeleteModalOpen(false);
     setPasswordModalOpen(true);
+    // setData(modifiedPostData);
   };
 
   const handleCancelDelete = () => {
@@ -42,13 +94,28 @@ export default function DetailsView() {
     setPasswordInput(e.target.value);
   };
 
-  const handleConfirmPassword = () => {
-    // 비밀번호를 확인하고 게시물을 삭제하는 실제 로직 추가
-    // 현재는 비밀번호 모달을 닫기만 한다
-    setPasswordModalOpen(false);
+  const handleConfirmPassword = async () => {
+    try {
+      const apiUrl = `http://15.165.252.35:1936/department/posts/${postId}`;
+      const response = await axios.delete(apiUrl, {
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+        },
+        // data: {
+        //   password: passwordInput,
+        // },
+      });
+      console.log("게시물이 성공적으로 삭제되었습니다.", response.data);
+      setPasswordInput(""); // 비밀번호 입력 필드 초기화
+      setPasswordModalOpen(false);
+      setDeleteModalOpen(false);
+    } catch (error) {
+      console.error("게시물 삭제 중 오류 발생:", error);
+    }
   };
 
   const handleCancelPassword = () => {
+    setPasswordInput(""); // 비밀번호 입력 필드 초기화
     setPasswordModalOpen(false);
   };
 
@@ -61,15 +128,45 @@ export default function DetailsView() {
     setModifyModalOpen(true);
   };
 
-  const handleConfirmModify = () => {
-    setModifyModalOpen(false);
-    // 게시글 수정 처리 로직을 여기에 추가
-    window.alert("게시글이 수정되었습니다.");
-  };
-
   const handleCancelModify = () => {
     setModifyModalOpen(false);
   };
+ 
+  const handleSpanChange = (event) => {
+    if (event.target.id == 'detail_title_txt') {
+      setModifiedPostData({...modifiedPostData, title: event.target.textContent});
+    } else {
+      setModifiedPostData({...modifiedPostData, content: event.target.textContent});
+    }
+  };
+
+
+  // DetailView
+  useEffect(() => {
+    console.log("initial-postId: " + postId);
+    const fetchData = async () => {
+      try {
+        const apiUrl = `http://15.165.252.35:1936/department/posts/${postId}`;
+
+        const response = await axios.get(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        setData(response.data.data);
+        setModifiedPostData(response.data.data);
+
+        console.log(response.data.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    
+    if (postId) {
+      fetchData();
+    }
+  }, [postId]);
 
   return (
     <DetailsViewWrap>
@@ -79,45 +176,73 @@ export default function DetailsView() {
           <PostInform>게시글 기본 정보</PostInform>
           <Scrap>스크랩</Scrap>
         </TitleWrap>
-        <Number>고유번호: {selectedPost.number}</Number>
-        <Date>작성일: {selectedPost.date}</Date>
-        <UpdateDate>업데이트일</UpdateDate>
-
-        <TitleBox>{selectedPost.title}</TitleBox>
-        <Content>{selectedPost.content}</Content>
-      </PostContainer>
+        <Number>고유번호:{data.postId}</Number>
+        <Date>작성일: {data.createdAt}</Date>
+        <UpdateDate>업데이트일: {data.modifiedAt}</UpdateDate>
+        <span id="detail_title_txt" contentEditable={isModifying} onBlur={handleSpanChange} suppressContentEditableWarning="true">
+          <TitleBox>{modifiedPostData.title}</TitleBox>
+        </span>
+        <span id="detail_content_txt" contentEditable={isModifying} onBlur={handleSpanChange} suppressContentEditableWarning="true">
+          <Content>{modifiedPostData.content}</Content>
+        </span>
       <ButtonWrap1>
-        <Button
-          width="120px"
-          height="28px"
-          fontSize="14px"
-          onClick={handleModifyClick}
-        >
-          게시글 수정
-        </Button>
+        {!isModifying && 
+          <Button
+            width="120px"
+            height="28px"
+            fontSize="14px"
+            onClick={handleModifyClick}
+          >
+            게시글 수정
+          </Button>
+        }
         {/* 수정 모달 */}
         <ModifyModal
           isOpen={isModifyModalOpen}
           onConfirm={handleConfirmModify}
           onCancel={handleCancelModify}
         />
-        <Button
-          width="120px"
-          height="28px"
-          fontSize="14px"
-          onClick={handleDeleteClick}
-        >
-          게시글 삭제
-        </Button>
+        {!isModifying &&
+          <Button
+            width="120px"
+            height="28px"
+            fontSize="14px"
+            onClick={handleDeleteClick}
+          >
+            게시글 삭제
+          </Button>
+        }
+        {isModifying &&
+          <Button
+            width="120px"
+            height="28px"
+            fontSize="14px"
+            onClick={handleCancelPostClick}
+          >
+            Cancel
+          </Button>
+        }
+        {isModifying &&
+          <Button
+            width="120px"
+            height="28px"
+            fontSize="14px"
+            onClick={handlePostClick}
+          >
+            Post
+          </Button>
+        }
       </ButtonWrap1>
+      </PostContainer>
+
       {/* 삭제 모달 */}
       <DeleteModal
         isOpen={isDeleteModalOpen}
         onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
+        onCancel={() => setDeleteModalOpen(false)}
       />
 
-      {/* 비밀번호 모달 */}
+      {/* 비밀번호 입력 모달 */}
       <PasswordModal
         isOpen={isPasswordModalOpen}
         onConfirm={handleConfirmPassword}
@@ -137,16 +262,15 @@ const StyledHeading = styled.h3`
 
 const DetailsViewWrap = styled.div`
   background-color: #fbfcfe;
-  height: 100vh;
+  max-height: 300vh; 
   width: 692px;
-  padding: 20px; // Added padding
+  padding: 20px;
   position: relative;
 `;
 
 const PostContainer = styled.div`
-  // Different background color
-  margin-bottom: 20px; // Added margin-bottom
-  padding: 20px; // Added padding
+  margin-bottom: 5%;
+  padding: 20px;
 `;
 
 const PostInform = styled.div`
@@ -198,13 +322,19 @@ const Content = styled.div`
   padding: 20px;
   margin-left: 30px;
   margin-right: 30px;
-  height: 200px;
+  max-height: 300px; 
+  overflow: auto;
+  margin-bottom: 5%;
 `;
 
 const ButtonWrap1 = styled.div`
-  margin-left: auto;
-  margin-right: 55px;
-  display: flex;
-  gap: 8px; /* Adjust the gap as needed */
-  justify-content: flex-end; /* Align buttons to the right */
+margin-left: auto;
+margin-right: 55px;
+display: flex;
+gap: 8px; 
+justify-content: flex-end; 
+@media (max-width: 700px) {
+  flex-direction: column; 
+  align-items: flex-end;
+}
 `;

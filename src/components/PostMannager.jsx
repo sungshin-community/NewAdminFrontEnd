@@ -4,11 +4,15 @@ import Button from "../common/Button";
 import Pagination from "./Pagination";
 import axios from "axios";
 
-export default function PostMannager({ onWritingButtonClick }) {
+
+export default function PostMannager({ onWritingButtonClick, onPostClick, isModifying }) {
   const [postLists, setPostLists] = useState([]); // 게시글 목록
   const [data, setData] = useState([]); // 전체 데이터
   const [currentPage, setCurrentPage] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState(""); // 검색어
+  const [selectedPost, setSelectedPost] = useState(null); // 선택된 게시글
+  const [isWriting, setIsWriting] = useState(false);
+
   //const accessToken = localStorage.getItem("accessToken");
   // 검색어 입력
   const handleSearchInputChange = (e) => {
@@ -22,10 +26,8 @@ export default function PostMannager({ onWritingButtonClick }) {
 
   //테스트 accessToken
   const accessToken =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjM1MTIzNSIsImF1dGgiOiJTQ0hPT0xfREVQQVJUTUVOVCIsImV4cCI6MTcxMDA2MTk3Nn0.dCE9ztfYKhyMPmKtz3eSbE9dWM-SH0g6SLdNefgT8KLHMCKSgHikcDrJkwNJHvfR5AemULD6A7VAAvgMVMDxLg";
-
-  // 로그인 테스트 코드
-  const login = async (id, password) => {
+  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjM1MTIzNSIsImF1dGgiOiJTQ0hPT0xfREVQQVJUTUVOVCIsImV4cCI6MTcxMDQxMjU2OX0.yFqMF2zyQTv7SF3KHC2E4p-NGMobtIPBVeWWKjm2GHGFjQlOJCLvCKTTD2sUHDaX6igwHG4De7zVVwjqPnFeWw";
+   const login = async (id, password) => {
     try {
       const apiUrl = "http://15.165.252.35:1936/auth/signin";
 
@@ -113,6 +115,14 @@ export default function PostMannager({ onWritingButtonClick }) {
     fetchData(currentPage);
   }, [currentPage]);
 
+  const handlePostClick = (postId) => {
+    if (isModifying) return;
+    console.log("Post ID:", postId);
+    setSelectedPost(postId);
+    onPostClick(postId); // 선택된 게시물의 ID를 부모 컴포넌트로 전달
+};
+
+
   return (
     <PostMannagerWrap>
       {/* 상단 제목 */}
@@ -156,16 +166,23 @@ export default function PostMannager({ onWritingButtonClick }) {
           </TableBox>
         </ListBoxWrap>
         {postLists.map((data, index) => (
-          <ListBoxWrap even={index % 2 === 0}>
-            <TableBox>{data.postId}</TableBox>
-            <TableBox width="160px">{data.title}</TableBox>
-            <TableBox width="130px">{data.createdAt}</TableBox>
-            <TableBox style={{ flex: 1 }}>
-              {data.content.length > 15
-                ? `${data.content.slice(0, 15)}...`
-                : data.content}
-            </TableBox>
-          </ListBoxWrap>
+          <ClickablePost
+            isModifying={isModifying}
+            key={data.postId}
+            onClick={() => handlePostClick(data.postId)}
+          >
+            <ListBoxWrap even={index % 2 === 0}>
+              <TableBox>{data.postId}</TableBox>
+              <TableBox width="160px">{data.title}</TableBox>
+              <TableBox width="130px">{data.createdAt}</TableBox>
+              <TableBox style={{ flex: 1 }}>
+                {data.content.length > 15
+                  ? `${data.content.slice(0, 15)}...`
+                  : data.content}
+              </TableBox>
+            </ListBoxWrap>
+          </ClickablePost>
+
         ))}
       </ListContainer>
       <ButtonWrap>
@@ -251,3 +268,11 @@ const ListContainer = styled.div`
 const ButtonWrap = styled.div`
   margin-left: auto;
 `;
+
+const ClickablePost = styled.div`
+  cursor: ${(props) => (props.isModifying? 'not-allowed' : 'pointer')};
+`;
+
+const handlePostClick = (postId) => {
+  console.log("Clicked post with ID:", postId);
+};
