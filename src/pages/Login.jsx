@@ -1,83 +1,163 @@
-import React, { useState } from "react";
-//import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import styled from "styled-components";
 import Logo from "../assets/image/Logo.svg";
-
+const BASE_URL = "http://15.165.252.35:1936";
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [autoLogin, setAutoLogin] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
+  //이미 로그인되어있는지 확인하는 로직
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  //로그인 로직
   const handleSubmit = async (e) => {
     e.preventDefault();
+    //아이디나 비밀번호 미입력 시 에러
     if (!username || !password) {
-      setErrorMessage('아이디와 비밀번호를 입력해주세요.');
+      setErrorMessage("아이디와 비밀번호를 입력해주세요.");
       return;
-    } else {
-      setErrorMessage('');
     }
-  }
 
-    //api 연동 시 사용할 부분
-    /*try {
-      const response = await axios.post('https://api-endpoint/login', {
+    //아이디와 비밀번호를 입력하여 로그인 요청하는 로직
+    try {
+      const response = await axios.post(`${BASE_URL}/auth/signin`, {
         username,
         password,
       });
+      //로그인 성공 시,
+      //응답 데이터 확인, 로컬 스토리지에 토큰들 저장, 인증 헤더 설정, 게시물 페이지로 이동
+      console.log(response.data);
+      setErrorMessage("");
+      localStorage.setItem(
+        "accessToken",
+        response.data.data.tokenDto.accessToken
+      );
+      localStorage.setItem(
+        "refreshToken",
+        response.data.data.tokenDto.refreshToken
+      );
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${response.data.data.tokenDto.accessToken}`;
+      console.log(axios.defaults.headers.common.Authorization);
+      navigate("/");
+      //로그인 에러 처리 로직
     } catch (error) {
-      if (error.response) {
-        setErrorMessage('아이디와 비밀번호를 정확하게 입력해주세요.');
+      if (error.response && error.response.status === 400) {
+        setErrorMessage("아이디와 비밀번호를 정확하게 입력해주세요.");
       } else {
-        console.log('Error', error.message);
+        setErrorMessage("로그인에 실패했습니다. 다시 시도해주세요.");
+        console.log("Error", error.message);
       }
     }
-  };*/
+  };
+
+  //액세스 토큰 재발급 로직
+  axios.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      if (error.response.status === 401 && !error.config._retry) {
+        error.config._retry = true;
+        try {
+          const tokenResponse = await axios.post(
+            `${BASE_URL}/auth/reissue-token`,
+            {
+              accessToken: localStorage.getItem("accessToken"),
+              refreshToken: localStorage.getItem("refreshToken"),
+            }
+          );
+          localStorage.setItem(
+            "accessToken",
+            tokenResponse.data.data.accessToken
+          );
+          axios.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${tokenResponse.data.data.accessToken}`;
+          return axios(error.config);
+        } catch (reissueError) {
+          console.error("Token Expired. Redirecting to login page.");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          navigate("/login"); //리프레시 토큰 만료 시 토큰 삭제 후 로그인 페이지로 리다이렉트
+          return Promise.reject(reissueError);
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
+
+  //서버로 보내는 모든 요청에 액세스 토큰을 포함하는 로직
+  axios.interceptors.request.use(
+    (config) => {
+      const authToken = localStorage.getItem("accessToken");
+      if (authToken) {
+        config.headers["Authorization"] = `Bearer ${authToken}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
 
   return (
     <Background>
       <LoginFormWrap>
-        <LogoImg src={Logo} alt="수정광산 로고"/>
+        <LogoImg src={Logo} alt="수정광산 로고" />
         <AdminText>수정광산 관리자 페이지</AdminText>
-        <DetailText>함께 성장하고 같이 연대하는<br/>우리만의 공간</DetailText>
-       <form onSubmit={handleSubmit}>
-        <InputWrap>
-          <IDInput 
-            placeholder="ID"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            maxLength={25}
-            hasError={errorMessage}>
-          </IDInput>
-          <PWInput
-          placeholder="PW"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          maxLength={25}
-          hasError={errorMessage}>
-          </PWInput>
-          {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-        </InputWrap>
-        <AutoLoginWrap>
-          <CheckInput
-            type="checkbox"
-            checked={autoLogin}
-            onChange={(e) => setAutoLogin(e.target.checked)}>
-          </CheckInput>
-          <CheckLabel>
-          자동 로그인
-          </CheckLabel>
-        </AutoLoginWrap>
-        {autoLogin && <CheckText>자동 로그인 진행시, 로그인 상태는 30일동안 유지됩니다.</CheckText>}
-      <LoginButton type="submit">로그인</LoginButton>
-    </form>
-    </LoginFormWrap>
+        <DetailText>
+          함께 성장하고 같이 연대하는
+          <br />
+          우리만의 공간
+        </DetailText>
+        <form onSubmit={handleSubmit}>
+          <InputWrap>
+            <IDInput
+              placeholder="ID"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              maxLength={25}
+              hasError={errorMessage}
+            ></IDInput>
+            <PWInput
+              placeholder="PW"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              maxLength={25}
+              hasError={errorMessage}
+            ></PWInput>
+            {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
+          </InputWrap>
+          <AutoLoginWrap>
+            <CheckInput
+              type="checkbox"
+              checked={autoLogin}
+              onChange={(e) => setAutoLogin(e.target.checked)}
+            ></CheckInput>
+            <CheckLabel>자동 로그인</CheckLabel>
+          </AutoLoginWrap>
+          {autoLogin && (
+            <CheckText>
+              자동 로그인 진행시, 로그인 상태는 30일동안 유지됩니다.
+            </CheckText>
+          )}
+          <LoginButton type="submit">로그인</LoginButton>
+        </form>
+      </LoginFormWrap>
     </Background>
   );
-};
+}
 
 const Background = styled.div`
   display: flex;
@@ -85,7 +165,7 @@ const Background = styled.div`
   height: 100vh;
   justify-content: center;
   align-items: center;
-  background-color: #F6F9FD;
+  background-color: #f6f9fd;
 `;
 
 const LoginFormWrap = styled.div`
@@ -104,7 +184,7 @@ const LogoImg = styled.img`
 `;
 
 const AdminText = styled.text`
-  color: #A055FF;
+  color: #a055ff;
   font-size: 23px;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -126,11 +206,11 @@ const InputWrap = styled.div`
 const IDInput = styled.input`
   width: 330px;
   height: 35px;
-  border: 1px solid ${props => props.hasError ? "red" : "#D6DFE9"};
+  border: 1px solid ${(props) => (props.hasError ? "red" : "#D6DFE9")};
   padding: 5px;
 
   &:focus {
-    border: 1px solid #A055FF;
+    border: 1px solid #a055ff;
   }
   &::placeholder {
     font-size: 15px;
@@ -141,11 +221,11 @@ const IDInput = styled.input`
 const PWInput = styled.input`
   width: 330px;
   height: 35px;
-  border: 1px solid ${props => props.hasError ? "red" : "#D6DFE9"};
+  border: 1px solid ${(props) => (props.hasError ? "red" : "#D6DFE9")};
   padding: 5px;
 
   &:focus {
-    border-color: 1px solid #A055FF;
+    border-color: 1px solid #a055ff;
   }
   &::placeholder {
     font-size: 15px;
@@ -157,7 +237,7 @@ const ErrorText = styled.text`
   font-size: 14px;
   color: red;
   margin-top: 3px;
-`
+`;
 
 const AutoLoginWrap = styled.div`
   display: flex;
@@ -165,38 +245,38 @@ const AutoLoginWrap = styled.div`
   gap: 5px;
   margin-top: 25px;
   margin-botton: 25px;
-`
+`;
 
 const CheckInput = styled.input`
   width: 20px;
   height: 20px;
-  outline: 1px solid #D6DFE9;
+  outline: 1px solid #d6dfe9;
   border-radius: none;
-  accent-color: #A055FF;
-`
+  accent-color: #a055ff;
+`;
 
 const CheckLabel = styled.text`
   color: gray;
   font-size: 15px;
-`
+`;
 
 const CheckText = styled.div`
   font-size: 14px;
-  color: #A055FF;
+  color: #a055ff;
   margin-top: 10px;
   margin-botton: 10px;
-`
+`;
 
 const LoginButton = styled.button`
   width: 340px;
   height: 50px;
   margin-top: 25px;
   font-size: 18px;
-  background-color: #979CAC;
+  background-color: #979cac;
   color: white;
   border: none;
 
   &:hover {
-    background-color: #2F395A;
+    background-color: #2f395a;
   }
-`
+`;
