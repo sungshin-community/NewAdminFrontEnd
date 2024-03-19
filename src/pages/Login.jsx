@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import bcrypt from 'bcryptjs'
 import styled from "styled-components";
 import Logo from "../assets/image/Logo.svg";
 const BASE_URL = "http://15.165.252.35:1936";
@@ -39,6 +40,8 @@ export default function Login() {
       //응답 데이터 확인, 로컬 스토리지에 토큰들 저장, 인증 헤더 설정, 게시물 페이지로 이동
       console.log(response.data);
       setErrorMessage("");
+      const hashed = await bcrypt.hash(password, 10);
+      localStorage.setItem("hashed", hashed);
       localStorage.setItem(
         "accessToken",
         response.data.data.tokenDto.accessToken

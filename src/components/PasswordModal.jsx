@@ -1,23 +1,28 @@
 import React from "react";
 import Modal from "./Modal"; 
 import styled from "styled-components";
+import bcrypt from 'bcryptjs'
+
 import { useState } from "react";
 
 const PasswordModal = ({ isOpen, onConfirm, onCancel, onChange, passwordInput }) => {
-  // eslint-disable-next-line
   const [isPasswordValid, setIsPasswordValid] = useState(true);
+ 
+  const hashedPassword = localStorage.getItem("hashed");
+  console.log("Hashed password from localStorage:", hashedPassword);
 
   const handleConfirm = () => {
-    // 연동 전 데모 데이터
-    const correctPassword = "example123";
-    if (passwordInput === correctPassword) {
+    if (bcrypt.compareSync(passwordInput, hashedPassword)) {
       setIsPasswordValid(true);
       onConfirm(); // 비밀번호가 맞으면 확인 동작 수행
+      window.alert("삭제가 완료되었습니다.");
+      window.location.reload();
     } else {
       setIsPasswordValid(false);
       window.alert("올바르지 않은 비밀번호입니다. 다시 시도하세요.");
     }
   };
+
 
   return (
     <StyledPasswordModal isOpen={isOpen} onClose={onCancel}>

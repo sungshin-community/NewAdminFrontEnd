@@ -26,7 +26,7 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
 
   //테스트 accessToken
   const accessToken =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjM1MTIzNSIsImF1dGgiOiJTQ0hPT0xfREVQQVJUTUVOVCIsImV4cCI6MTcxMDQxMjU2OX0.yFqMF2zyQTv7SF3KHC2E4p-NGMobtIPBVeWWKjm2GHGFjQlOJCLvCKTTD2sUHDaX6igwHG4De7zVVwjqPnFeWw";
+  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjM1MTIzNSIsImF1dGgiOiJTQ0hPT0xfREVQQVJUTUVOVCIsImV4cCI6MTcxMDc3NjE5Nn0.KhfX5_UIt0gCP4KZQCp1A30WRE4mSDUF7uJ4ZTmm6kHxq8ikKNmnPX1vt9Ig0NcTGcJ-CRXzShWYlRYeTACKWg";
    const login = async (id, password) => {
     try {
       const apiUrl = "http://15.165.252.35:1936/auth/signin";

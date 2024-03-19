@@ -101,9 +101,9 @@ export default function DetailsView({ postId, updateIsModifying }) {
         headers: {
           "Authorization": `Bearer ${accessToken}`,
         },
-        // data: {
-        //   password: passwordInput,
-        // },
+        data: {
+          password: passwordInput,
+        },
       });
       console.log("게시물이 성공적으로 삭제되었습니다.", response.data);
       setPasswordInput(""); // 비밀번호 입력 필드 초기화
@@ -219,7 +219,7 @@ export default function DetailsView({ postId, updateIsModifying }) {
             fontSize="14px"
             onClick={handleCancelPostClick}
           >
-            Cancel
+            취소
           </Button>
         }
         {isModifying &&
@@ -229,7 +229,7 @@ export default function DetailsView({ postId, updateIsModifying }) {
             fontSize="14px"
             onClick={handlePostClick}
           >
-            Post
+            등록하기
           </Button>
         }
       </ButtonWrap1>
@@ -325,6 +325,7 @@ const Content = styled.div`
   max-height: 300px; 
   overflow: auto;
   margin-bottom: 5%;
+  line-height: 1.7;
 `;
 
 const ButtonWrap1 = styled.div`
