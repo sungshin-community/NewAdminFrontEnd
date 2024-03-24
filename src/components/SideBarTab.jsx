@@ -17,6 +17,8 @@ export default function SideBarTab() {
       console.log(response.data);
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem("hashed");
+      localStorage.removeItem("autoLogin");
       navigate("/login");
     } catch (error) {
       alert("토큰 정보를 찾을 수 없어 로그아웃 실패");
@@ -53,8 +55,11 @@ const LogoutButton = styled.button`
   color: #979cac;
   position: relative;
   top: 650px;
-  margin-left: 70px;
+  margin-left: 32px;
   border: none;
   background-color: #f6f9fd;
   cursor: pointer;
+  &:hover {
+    color: #2f395a;
+  }
 `;

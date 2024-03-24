@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import bcrypt from "bcryptjs";
 import styled from "styled-components";
 import Logo from "../assets/image/Logo.svg";
+import EyeIconOff from "../assets/image/eye-off.png";
+import EyeIconOn from "../assets/image/eye-on.png";
 const BASE_URL = "http://15.165.252.35:1936";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [autoLogin, setAutoLogin] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
@@ -15,6 +19,8 @@ export default function Login() {
   //이미 로그인되어있는지 확인하는 로직
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
+    const savedAutoLogin = localStorage.getItem("autoLogin") === "true";
+    setAutoLogin(savedAutoLogin);
     if (accessToken) {
       navigate("/");
     }
@@ -38,7 +44,12 @@ export default function Login() {
       //로그인 성공 시,
       //응답 데이터 확인, 로컬 스토리지에 토큰들 저장, 인증 헤더 설정, 게시물 페이지로 이동
       console.log(response.data);
+      console.log(autoLogin);
       setErrorMessage("");
+      const hashed = await bcrypt.hash(password, 10);
+      //console.log(bcrypt.hash(password, 10));
+      localStorage.setItem("hashed", hashed);
+      localStorage.setItem("autoLogin", autoLogin.toString());
       localStorage.setItem(
         "accessToken",
         response.data.data.tokenDto.accessToken
@@ -67,7 +78,12 @@ export default function Login() {
   axios.interceptors.response.use(
     (response) => response,
     async (error) => {
-      if (error.response.status === 401 && !error.config._retry) {
+      const isAutoLoginPossible = localStorage.getItem("autoLogin") === "true";
+      if (
+        isAutoLoginPossible &&
+        error.response.status === 401 &&
+        !error.config._retry
+      ) {
         error.config._retry = true;
         try {
           const tokenResponse = await axios.post(
@@ -81,14 +97,23 @@ export default function Login() {
             "accessToken",
             tokenResponse.data.data.accessToken
           );
+          localStorage.setItem(
+            "refreshToken",
+            tokenResponse.data.data.refreshToken
+          );
           axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${tokenResponse.data.data.accessToken}`;
           return axios(error.config);
         } catch (reissueError) {
           console.error("Token Expired. Redirecting to login page.");
+          window.alert(
+            "토큰이 만료되었습니다. 로그인 페이지로 리다이렉트합니다."
+          );
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
+          localStorage.removeItem("autoLogin");
+          localStorage.removeItem("hashed");
           navigate("/login"); //리프레시 토큰 만료 시 토큰 삭제 후 로그인 페이지로 리다이렉트
           return Promise.reject(reissueError);
         }
@@ -108,6 +133,10 @@ export default function Login() {
     },
     (error) => Promise.reject(error)
   );
+
+  const handlePasswordToggle = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <Background>
@@ -129,14 +158,21 @@ export default function Login() {
               maxLength={25}
               hasError={errorMessage}
             ></IDInput>
-            <PWInput
-              placeholder="PW"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              maxLength={25}
-              hasError={errorMessage}
-            ></PWInput>
+            <PWInputWrap>
+              <PWInput
+                placeholder="PW"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                maxLength={25}
+                hasError={errorMessage}
+              ></PWInput>
+              {showPassword ? (
+                <EyeButton src={EyeIconOn} onClick={handlePasswordToggle} />
+              ) : (
+                <EyeButton src={EyeIconOff} onClick={handlePasswordToggle} />
+              )}
+            </PWInputWrap>
             {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
           </InputWrap>
           <AutoLoginWrap>
@@ -218,6 +254,12 @@ const IDInput = styled.input`
   }
 `;
 
+const PWInputWrap = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+`;
+
 const PWInput = styled.input`
   width: 330px;
   height: 35px;
@@ -231,6 +273,15 @@ const PWInput = styled.input`
     font-size: 15px;
     padding: 5px;
   }
+`;
+
+const EyeButton = styled.img`
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
 `;
 
 const ErrorText = styled.text`
