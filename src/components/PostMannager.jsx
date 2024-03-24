@@ -4,8 +4,11 @@ import Button from "../common/Button";
 import Pagination from "./Pagination";
 import axios from "axios";
 
-
-export default function PostMannager({ onWritingButtonClick, onPostClick, isModifying }) {
+export default function PostMannager({
+  onWritingButtonClick,
+  onPostClick,
+  isModifying,
+}) {
   const [postLists, setPostLists] = useState([]); // 게시글 목록
   const [data, setData] = useState([]); // 전체 데이터
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,7 +16,7 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
   const [selectedPost, setSelectedPost] = useState(null); // 선택된 게시글
   const [isWriting, setIsWriting] = useState(false);
 
-  //const accessToken = localStorage.getItem("accessToken");
+  const accessToken = localStorage.getItem("accessToken");
   // 검색어 입력
   const handleSearchInputChange = (e) => {
     setSearchKeyword(e.target.value);
@@ -25,7 +28,8 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
   };
 
   //테스트 accessToken
-  const accessToken =
+  {
+    /*  const accessToken =
   "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjM1MTIzNSIsImF1dGgiOiJTQ0hPT0xfREVQQVJUTUVOVCIsImV4cCI6MTcxMDc3NjE5Nn0.KhfX5_UIt0gCP4KZQCp1A30WRE4mSDUF7uJ4ZTmm6kHxq8ikKNmnPX1vt9Ig0NcTGcJ-CRXzShWYlRYeTACKWg";
    const login = async (id, password) => {
     try {
@@ -49,7 +53,7 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
     }
   };
 
-  const testLogin = async () => {
+    const testLogin = async () => {
     try {
       const result = await login("12351235", "password123!!!");
       if (result) {
@@ -64,7 +68,8 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
 
   useEffect(() => {
     testLogin();
-  }, []);
+  }, []);*/
+  }
 
   // 게시글 목록 연동
   useEffect(() => {
@@ -103,9 +108,7 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
       setPostLists(response.data.data.content);
-      console.log("content", response.data.data);
     } catch (error) {
       console.error(error);
     }
@@ -120,8 +123,7 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
     console.log("Post ID:", postId);
     setSelectedPost(postId);
     onPostClick(postId); // 선택된 게시물의 ID를 부모 컴포넌트로 전달
-};
-
+  };
 
   return (
     <PostMannagerWrap>
@@ -182,7 +184,6 @@ export default function PostMannager({ onWritingButtonClick, onPostClick, isModi
               </TableBox>
             </ListBoxWrap>
           </ClickablePost>
-
         ))}
       </ListContainer>
       <ButtonWrap>
@@ -270,7 +271,7 @@ const ButtonWrap = styled.div`
 `;
 
 const ClickablePost = styled.div`
-  cursor: ${(props) => (props.isModifying? 'not-allowed' : 'pointer')};
+  cursor: ${(props) => (props.isModifying ? "not-allowed" : "pointer")};
 `;
 
 const handlePostClick = (postId) => {
