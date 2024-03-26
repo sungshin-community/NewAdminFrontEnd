@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.js": "/NewAdminFrontEnd/static/js/main.cb45901c.js",
+    "static/media/SpoqaHanSansNeo-Bold.otf": "/NewAdminFrontEnd/static/media/SpoqaHanSansNeo-Bold.577064393254c1a43de9.otf",
+    "static/media/SpoqaHanSansNeo-Medium.otf": "/NewAdminFrontEnd/static/media/SpoqaHanSansNeo-Medium.fbf62f354480b77797d7.otf",
+    "static/media/SpoqaHanSansNeo-Regular.otf": "/NewAdminFrontEnd/static/media/SpoqaHanSansNeo-Regular.42d3dd481b467623968a.otf",
+    "static/media/SpoqaHanSansNeo-Thin.otf": "/NewAdminFrontEnd/static/media/SpoqaHanSansNeo-Thin.a08606f1a9eb1dcac60d.otf",
+    "static/media/SpoqaHanSansNeo-Light.otf": "/NewAdminFrontEnd/static/media/SpoqaHanSansNeo-Light.a6f38db1a0cf0265dc43.otf",
+    "static/media/Logo.svg": "/NewAdminFrontEnd/static/media/Logo.53d2694112c7ebcd1d35889f53dee1bb.svg",
+    "index.html": "/NewAdminFrontEnd/index.html",
+    "main.cb45901c.js.map": "/NewAdminFrontEnd/static/js/main.cb45901c.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.cb45901c.js"
+  ]
+}
