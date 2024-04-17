@@ -26,11 +26,16 @@ export default function SideBarTab() {
     }
   };
 
+  const moveToResetPW = () => {
+    navigate("/resetPW");
+  };
+
   return (
     <>
       <SideBarTabWrap>
         <TabText>작성 게시글 관리</TabText>
       </SideBarTabWrap>
+      <ResetPWButton onClick={moveToResetPW}>비밀번호 변경</ResetPWButton>
       <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
     </>
   );
@@ -54,8 +59,23 @@ const LogoutButton = styled.button`
   font-size: 17px;
   color: #979cac;
   position: relative;
-  top: 650px;
+  top: 620px;
   margin-left: 32px;
+  border: none;
+  background-color: #f6f9fd;
+  cursor: pointer;
+  &:hover {
+    color: #2f395a;
+  }
+`;
+
+const ResetPWButton = styled.button`
+  font-size: 17px;
+  color: #979cac;
+  position: relative;
+  top: 610px;
+  margin-left: 32px;
+  margin-bottom: 20px;
   border: none;
   background-color: #f6f9fd;
   cursor: pointer;
