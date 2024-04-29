@@ -48,6 +48,7 @@ export default function Login() {
       setErrorMessage("");
       const hashed = await bcrypt.hash(password, 10);
       //console.log(bcrypt.hash(password, 10));
+      localStorage.setItem("ID", username);
       localStorage.setItem("hashed", hashed);
       localStorage.setItem("autoLogin", autoLogin.toString());
       localStorage.setItem(
