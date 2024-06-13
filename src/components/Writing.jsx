@@ -18,7 +18,7 @@ export default function Writing() {
 
     try {
       const response = await axios.post(
-        `http://15.165.252.35:1936/department/posts`,
+        `//15.165.252.35:1936/department/posts`,
         null,
         {
           headers: {

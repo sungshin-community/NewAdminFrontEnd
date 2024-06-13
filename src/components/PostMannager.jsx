@@ -75,7 +75,7 @@ export default function PostMannager({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = `http://15.165.252.35:1936/department/posts`;
+        const apiUrl = `//15.165.252.35:1936/department/posts`;
 
         const response = await axios.get(apiUrl, {
           headers: {
@@ -95,9 +95,7 @@ export default function PostMannager({
   // 페이지 별 게시글 목록 연동
   const fetchData = async (page, searchKeyword) => {
     try {
-      let apiUrl = `http://15.165.252.35:1936/department/posts?page=${
-        page - 1
-      }`;
+      let apiUrl = `//15.165.252.35:1936/department/posts?page=${page - 1}`;
 
       // 검색어가 있을 경우 쿼리에 추가
       if (searchKeyword) {

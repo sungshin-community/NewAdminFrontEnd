@@ -11,7 +11,7 @@ export default function DetailsView({ postId, updateIsModifying }) {
   {
     /*삭제 모달*/
   }
-  
+
   const accessToken = localStorage.getItem("accessToken");
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
@@ -40,21 +40,17 @@ export default function DetailsView({ postId, updateIsModifying }) {
 
     try {
       console.log("Modified Post Data:", modifiedPostData);
-      const apiUrl = `http://15.165.252.35:1936/department/posts/${postId}`;
-      const response = await axios.put(
-        apiUrl,
-        null, 
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          params: modifiedPostData
-        }
-      );
+      const apiUrl = `//15.165.252.35:1936/department/posts/${postId}`;
+      const response = await axios.put(apiUrl, null, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: modifiedPostData,
+      });
 
       console.log("게시글이 성공적으로 수정되었습니다.", response.data);
       window.alert("게시글이 수정되었습니다.");
-      
+
       setData(modifiedPostData);
     } catch (error) {
       setModifiedPostData(data);
@@ -64,7 +60,6 @@ export default function DetailsView({ postId, updateIsModifying }) {
     setIsModifying(false);
     updateIsModifying(false);
   };
-
 
   const handleCancelPostClick = () => {
     setModifiedPostData(data);
@@ -79,7 +74,7 @@ export default function DetailsView({ postId, updateIsModifying }) {
   const handleDeleteClick = () => {
     setDeleteModalOpen(true);
   };
- 
+
   const handleConfirmDelete = () => {
     setDeleteModalOpen(false);
     setPasswordModalOpen(true);
@@ -96,10 +91,10 @@ export default function DetailsView({ postId, updateIsModifying }) {
 
   const handleConfirmPassword = async () => {
     try {
-      const apiUrl = `http://15.165.252.35:1936/department/posts/${postId}`;
+      const apiUrl = `//15.165.252.35:1936/department/posts/${postId}`;
       const response = await axios.delete(apiUrl, {
         headers: {
-          "Authorization": `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         data: {
           password: passwordInput,
@@ -131,22 +126,27 @@ export default function DetailsView({ postId, updateIsModifying }) {
   const handleCancelModify = () => {
     setModifyModalOpen(false);
   };
- 
+
   const handleSpanChange = (event) => {
-    if (event.target.id == 'detail_title_txt') {
-      setModifiedPostData({...modifiedPostData, title: event.target.textContent});
+    if (event.target.id == "detail_title_txt") {
+      setModifiedPostData({
+        ...modifiedPostData,
+        title: event.target.textContent,
+      });
     } else {
-      setModifiedPostData({...modifiedPostData, content: event.target.textContent});
+      setModifiedPostData({
+        ...modifiedPostData,
+        content: event.target.textContent,
+      });
     }
   };
-
 
   // DetailView
   useEffect(() => {
     console.log("initial-postId: " + postId);
     const fetchData = async () => {
       try {
-        const apiUrl = `http://15.165.252.35:1936/department/posts/${postId}`;
+        const apiUrl = `//15.165.252.35:1936/department/posts/${postId}`;
 
         const response = await axios.get(apiUrl, {
           headers: {
@@ -162,7 +162,7 @@ export default function DetailsView({ postId, updateIsModifying }) {
         console.error(error);
       }
     };
-    
+
     if (postId) {
       fetchData();
     }
@@ -179,60 +179,70 @@ export default function DetailsView({ postId, updateIsModifying }) {
         <Number>고유번호:{data.postId}</Number>
         <Date>작성일: {data.createdAt}</Date>
         <UpdateDate>업데이트일: {data.modifiedAt}</UpdateDate>
-        <span id="detail_title_txt" contentEditable={isModifying} onBlur={handleSpanChange} suppressContentEditableWarning="true">
+        <span
+          id="detail_title_txt"
+          contentEditable={isModifying}
+          onBlur={handleSpanChange}
+          suppressContentEditableWarning="true"
+        >
           <TitleBox>{modifiedPostData.title}</TitleBox>
         </span>
-        <span id="detail_content_txt" contentEditable={isModifying} onBlur={handleSpanChange} suppressContentEditableWarning="true">
+        <span
+          id="detail_content_txt"
+          contentEditable={isModifying}
+          onBlur={handleSpanChange}
+          suppressContentEditableWarning="true"
+        >
           <Content>{modifiedPostData.content}</Content>
         </span>
-      <ButtonWrap1>
-        {!isModifying && 
-          <Button
-            width="120px"
-            height="28px"
-            fontSize="14px"
-            onClick={handleModifyClick}
-          >
-            게시글 수정
-          </Button>
-        }
-        {/* 수정 모달 */}
-        <ModifyModal
-          isOpen={isModifyModalOpen}
-          onConfirm={handleConfirmModify}
-          onCancel={handleCancelModify}
-        />
-        {!isModifying &&
-          <Button
-            width="120px"
-            height="28px"
-            fontSize="14px"
-            onClick={handleDeleteClick}
-          >
-            게시글 삭제
-          </Button>
-        }
-        {isModifying &&
-          <Button
-            width="120px"
-            height="28px"
-            fontSize="14px"
-            onClick={handleCancelPostClick}
-          >
-            취소
-          </Button>
-        }
-        {isModifying &&
-          <Button
-            width="120px"
-            height="28px"
-            fontSize="14px"
-            onClick={handlePostClick}
-          >
-            등록하기
-          </Button>
-        }
-      </ButtonWrap1>
+        <ButtonWrap1>
+          {!isModifying && (
+            <Button
+              width="120px"
+              height="28px"
+              fontSize="14px"
+              onClick={handleModifyClick}
+            >
+              게시글 수정
+            </Button>
+          )}
+          {/* 수정 모달 */}
+          <ModifyModal
+            isOpen={isModifyModalOpen}
+            onConfirm={handleConfirmModify}
+            onCancel={handleCancelModify}
+          />
+          {!isModifying && (
+            <Button
+              width="120px"
+              height="28px"
+              fontSize="14px"
+              onClick={handleDeleteClick}
+            >
+              게시글 삭제
+            </Button>
+          )}
+          {isModifying && (
+            <Button
+              width="120px"
+              height="28px"
+              fontSize="14px"
+              onClick={handleCancelPostClick}
+            >
+              취소
+            </Button>
+          )}
+          {isModifying && (
+            <Button
+              width="120px"
+              height="28px"
+              fontSize="14px"
+              onClick={handlePostClick}
+            >
+              등록하기
+            </Button>
+          )}
+        </ButtonWrap1>
       </PostContainer>
 
       {/* 삭제 모달 */}
@@ -262,7 +272,7 @@ const StyledHeading = styled.h3`
 
 const DetailsViewWrap = styled.div`
   background-color: #fbfcfe;
-  max-height: 300vh; 
+  max-height: 300vh;
   width: 692px;
   padding: 20px;
   position: relative;
@@ -322,20 +332,20 @@ const Content = styled.div`
   padding: 20px;
   margin-left: 30px;
   margin-right: 30px;
-  max-height: 300px; 
+  max-height: 300px;
   overflow: auto;
   margin-bottom: 5%;
   line-height: 1.7;
 `;
 
 const ButtonWrap1 = styled.div`
-margin-left: auto;
-margin-right: 55px;
-display: flex;
-gap: 8px; 
-justify-content: flex-end; 
-@media (max-width: 700px) {
-  flex-direction: column; 
-  align-items: flex-end;
-}
+  margin-left: auto;
+  margin-right: 55px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  @media (max-width: 700px) {
+    flex-direction: column;
+    align-items: flex-end;
+  }
 `;
