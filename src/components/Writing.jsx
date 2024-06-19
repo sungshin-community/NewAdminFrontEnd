@@ -18,7 +18,7 @@ export default function Writing() {
 
     try {
       const response = await axios.post(
-        `//15.165.252.35:1936/department/posts`,
+        `http://crystalmineadmindev.o-r.kr/department/posts`,
         null,
         {
           headers: {

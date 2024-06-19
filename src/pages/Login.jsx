@@ -6,7 +6,7 @@ import styled from "styled-components";
 import Logo from "../assets/image/Logo.svg";
 import EyeIconOff from "../assets/image/eye-off.png";
 import EyeIconOn from "../assets/image/eye-on.png";
-const BASE_URL = "//15.165.252.35:1936";
+const BASE_URL = "http://crystalmineadmindev.o-r.kr";
 
 export default function Login() {
   const [username, setUsername] = useState("");

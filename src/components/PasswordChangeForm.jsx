@@ -4,7 +4,7 @@ import axios from "axios";
 import styled from "styled-components";
 import EyeIconOff from "../assets/image/eye-off.png";
 import EyeIconOn from "../assets/image/eye-on.png";
-const BASE_URL = "http://15.165.252.35:1936";
+const BASE_URL = "http://crystalmineadmindev.o-r.kr";
 
 export default function PasswordChangeForm() {
   const [newPassword, setNewPassword] = useState("");

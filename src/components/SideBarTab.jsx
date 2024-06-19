@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
-const BASE_URL = "//15.165.252.35:1936";
+const BASE_URL = "http://crystalmineadmindev.o-r.kr";
 
 export default function SideBarTab() {
   const navigate = useNavigate();

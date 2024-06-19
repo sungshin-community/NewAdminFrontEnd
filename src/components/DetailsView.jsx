@@ -40,7 +40,7 @@ export default function DetailsView({ postId, updateIsModifying }) {
 
     try {
       console.log("Modified Post Data:", modifiedPostData);
-      const apiUrl = `//15.165.252.35:1936/department/posts/${postId}`;
+      const apiUrl = `http://crystalmineadmindev.o-r.kr/department/posts/${postId}`;
       const response = await axios.put(apiUrl, null, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -91,7 +91,7 @@ export default function DetailsView({ postId, updateIsModifying }) {
 
   const handleConfirmPassword = async () => {
     try {
-      const apiUrl = `//15.165.252.35:1936/department/posts/${postId}`;
+      const apiUrl = `http://crystalmineadmindev.o-r.kr/department/posts/${postId}`;
       const response = await axios.delete(apiUrl, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -146,7 +146,7 @@ export default function DetailsView({ postId, updateIsModifying }) {
     console.log("initial-postId: " + postId);
     const fetchData = async () => {
       try {
-        const apiUrl = `//15.165.252.35:1936/department/posts/${postId}`;
+        const apiUrl = `http://crystalmineadmindev.o-r.kr/department/posts/${postId}`;
 
         const response = await axios.get(apiUrl, {
           headers: {
