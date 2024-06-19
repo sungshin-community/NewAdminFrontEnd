@@ -95,7 +95,7 @@ export default function PostMannager({
   // 페이지 별 게시글 목록 연동
   const fetchData = async (page, searchKeyword) => {
     try {
-      let apiUrl = `http://1crystalmineadmindev.o-r.kr/department/posts?page=${
+      let apiUrl = `http://crystalmineadmindev.o-r.kr/department/posts?page=${
         page - 1
       }`;
 
