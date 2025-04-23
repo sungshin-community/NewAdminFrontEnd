@@ -18,7 +18,7 @@ export default function Writing() {
 
     try {
       const response = await axios.post(
-        `http://crystalmineadmindev.o-r.kr/department/posts`,
+        `http://admin-api.crystalmine.kr/department/posts`,
         null,
         {
           headers: {
